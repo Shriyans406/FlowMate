@@ -9,17 +9,19 @@ export async function POST(req: Request) {
         const body = await req.json();
         const prompt = body.prompt;
 
-        console.log("AI PROMPT:", prompt);
+        console.log("PROMPT:", prompt);
 
         const workflow = await generateWorkflow(prompt);
 
-        console.log("AI OUTPUT:", workflow);
+        console.log("AI RESULT:", workflow);
 
         const saved = await Workflow.create(workflow);
 
-        return new Response(JSON.stringify(saved), { status: 200 });
+        return new Response(JSON.stringify(saved), {
+            status: 200,
+        });
     } catch (err: any) {
-        console.error(err);
+        console.error("ERROR:", err);
 
         return new Response(
             JSON.stringify({ error: err.message }),
