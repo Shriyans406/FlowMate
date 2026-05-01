@@ -1,6 +1,8 @@
 import { Workflow } from "@/services/workflow";
 import { Execution } from "@/services/execution";
 
+import { sendSlackMessage } from "@/services/slack";
+
 export async function runWorkflow(trigger: string, payload: any) {
     console.log("RUN WORKFLOW CALLED");
 
@@ -21,7 +23,9 @@ export async function runWorkflow(trigger: string, payload: any) {
             if (wf.action === "send_email") {
                 result = "Email sent (simulated)";
             } else if (wf.action === "send_slack") {
-                result = "Slack message sent (simulated)";
+                result = await sendSlackMessage(
+                    `New event triggered for workflow: ${wf.name}`
+                );
             } else {
                 result = "Unknown action";
             }
