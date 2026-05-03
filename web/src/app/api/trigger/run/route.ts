@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import { runWorkflow } from "@/lib/executor";
+import { workflowQueue } from "@/lib/queue";
 
 export async function POST(req: Request) {
     try {
@@ -7,14 +7,15 @@ export async function POST(req: Request) {
 
         const body = await req.json();
 
-        const trigger = body.trigger;
+        console.log("ADDING JOB TO QUEUE");
 
-        console.log("TRIGGER RECEIVED:", trigger);
-
-        await runWorkflow(trigger, body);
+        await workflowQueue.add("run-workflow", {
+            trigger: body.trigger,
+            payload: body,
+        });
 
         return new Response(
-            JSON.stringify({ message: "Workflow executed" }),
+            JSON.stringify({ message: "Job added to queue" }),
             { status: 200 }
         );
     } catch (err: any) {
