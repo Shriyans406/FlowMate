@@ -128,7 +128,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow mb-6">
+      <div className="bg-black p-4 rounded-xl shadow mb-6">
         <h2 className="text-xl font-semibold mb-3">
           Analytics
         </h2>
