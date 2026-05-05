@@ -19,9 +19,14 @@ export default function Home() {
     try {
       const wf = await axios.get("/api/workflow/list");
       const ex = await axios.get("/api/execution/list");
+      const [stats, setStats] = useState<any>({});
 
       setWorkflows(wf.data);
       setExecutions(ex.data);
+
+      const statsRes = await axios.get("/api/analytics");
+
+      setStats(statsRes.data);
     } catch (err) {
       console.error("Fetch error:", err);
     }
@@ -121,6 +126,20 @@ export default function Home() {
         </button>
       </div>
 
+      <div className="bg-white p-4 rounded-xl shadow mb-6">
+        <h2 className="text-xl font-semibold mb-3">
+          Analytics
+        </h2>
+
+        <div className="flex gap-6">
+          <div>Total: {stats.total}</div>
+          <div className="text-green-600">Success: {stats.success}</div>
+          <div className="text-red-500">Failed: {stats.failed}</div>
+        </div>
+      </div>
+
+
+
       {/* WORKFLOWS */}
       <div className="bg-white p-4 rounded-xl shadow mb-6">
         <h2 className="text-xl font-semibold mb-3 text-gray-700">
@@ -163,8 +182,8 @@ export default function Home() {
 
               <span
                 className={`text-sm font-semibold ${e.status === "success"
-                    ? "text-green-600"
-                    : "text-red-500"
+                  ? "text-green-600"
+                  : "text-red-500"
                   }`}
               >
                 {e.status}

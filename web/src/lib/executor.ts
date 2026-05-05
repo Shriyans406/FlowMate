@@ -1,50 +1,46 @@
 import { Workflow } from "@/services/workflow";
 import { Execution } from "@/services/execution";
 
-import { sendSlackMessage } from "@/services/slack";
-
 export async function runWorkflow(trigger: string, payload: any) {
-    console.log("RUN WORKFLOW CALLED");
+    console.log("RUN WORKFLOW:", trigger);
 
-    const workflows = await Workflow.find({
-        trigger: trigger,
-        status: "active",
-    });
-
-    console.log("FOUND WORKFLOWS:", workflows.length);
+    const workflows = await Workflow.find({ trigger });
 
     for (const wf of workflows) {
+        let status = "success";
+        let log = "";
+
         try {
-            console.log("Executing:", wf.name);
+            console.log("Executing workflow:", wf.name);
 
-            let result = "";
-
-            // BASIC ACTION HANDLING
-            if (wf.action === "send_email") {
-                result = "Email sent (simulated)";
-            } else if (wf.action === "send_slack") {
-                result = await sendSlackMessage(
-                    `New event triggered for workflow: ${wf.name}`
-                );
-            } else {
-                result = "Unknown action";
+            // STEP 1: simulate action
+            if (wf.action === "send_slack") {
+                console.log("Sending Slack message...");
+                log = "Slack message sent successfully";
             }
 
-            await Execution.create({
-                workflowId: wf._id,
-                status: "success",
-                log: result,
-            });
+            if (wf.action === "send_email") {
+                console.log("Sending Email...");
+                log = "Email sent successfully";
+            }
 
-            console.log("Execution success:", result);
+            // simulate random failure (for testing)
+            if (Math.random() < 0.3) {
+                throw new Error("Random failure occurred");
+            }
+
         } catch (err: any) {
-            console.log("Execution failed:", err.message);
+            console.error("Execution error:", err.message);
 
-            await Execution.create({
-                workflowId: wf._id,
-                status: "failed",
-                log: err.message,
-            });
+            status = "failed";
+            log = err.message;
         }
+
+        // SAVE execution
+        await Execution.create({
+            workflowId: wf._id,
+            status,
+            log,
+        });
     }
 }

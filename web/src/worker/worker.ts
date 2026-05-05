@@ -22,4 +22,5 @@ worker.on("completed", () => {
 
 worker.on("failed", (job, err) => {
     console.log("JOB FAILED:", err.message);
+    console.log("Attempts made:", job?.attemptsMade);
 });

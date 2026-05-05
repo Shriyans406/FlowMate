@@ -9,10 +9,20 @@ export async function POST(req: Request) {
 
         console.log("ADDING JOB TO QUEUE");
 
-        await workflowQueue.add("run-workflow", {
-            trigger: body.trigger,
-            payload: body,
-        });
+        await workflowQueue.add(
+            "run-workflow",
+            {
+                trigger: body.trigger,
+                payload: body,
+            },
+            {
+                attempts: 3, // retry 3 times
+                backoff: {
+                    type: "exponential",
+                    delay: 5000, // 5 sec
+                },
+            }
+        );
 
         return new Response(
             JSON.stringify({ message: "Job added to queue" }),
