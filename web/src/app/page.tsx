@@ -14,12 +14,14 @@ export default function Home() {
 
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<any>({});
+
 
   async function fetchData() {
     try {
       const wf = await axios.get("/api/workflow/list");
       const ex = await axios.get("/api/execution/list");
-      const [stats, setStats] = useState<any>({});
+
 
       setWorkflows(wf.data);
       setExecutions(ex.data);
