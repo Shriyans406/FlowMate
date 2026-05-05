@@ -1,6 +1,8 @@
 import { Workflow } from "@/services/workflow";
 import { Execution } from "@/services/execution";
 
+import { sendSlackMessage } from "./slack";
+
 export async function runWorkflow(trigger: string, payload: any) {
     console.log("RUN WORKFLOW:", trigger);
 
@@ -16,7 +18,11 @@ export async function runWorkflow(trigger: string, payload: any) {
             // STEP 1: simulate action
             if (wf.action === "send_slack") {
                 console.log("Sending Slack message...");
-                log = "Slack message sent successfully";
+                await sendSlackMessage(
+                    `Workflow Triggered: ${wf.name}`
+                );
+
+                log = "Slack message sent (REAL)";
             }
 
             if (wf.action === "send_email") {
@@ -25,9 +31,9 @@ export async function runWorkflow(trigger: string, payload: any) {
             }
 
             // simulate random failure (for testing)
-            if (Math.random() < 0.3) {
-                throw new Error("Random failure occurred");
-            }
+            // if (Math.random() < 0.3) {
+            //     throw new Error("Random failure occurred");
+            // }
 
         } catch (err: any) {
             console.error("Execution error:", err.message);
