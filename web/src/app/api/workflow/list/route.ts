@@ -1,12 +1,19 @@
 import { connectDB } from "@/lib/db";
 import { Workflow } from "@/services/workflow";
 
-export async function GET() {
+export async function GET(req: Request) {
     await connectDB();
 
-    const workflows = await Workflow.find().sort({ createdAt: -1 });
+    const { searchParams } =
+        new URL(req.url);
 
-    return new Response(JSON.stringify(workflows), {
-        status: 200,
-    });
+    const userId =
+        searchParams.get("userId");
+
+    const workflows =
+        await Workflow.find({
+            userId,
+        });
+
+    return Response.json(workflows);
 }

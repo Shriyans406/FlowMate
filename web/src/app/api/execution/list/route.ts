@@ -1,12 +1,19 @@
 import { connectDB } from "@/lib/db";
 import { Execution } from "@/services/execution";
 
-export async function GET() {
+export async function GET(req: Request) {
     await connectDB();
 
-    const executions = await Execution.find().sort({ createdAt: -1 });
+    const { searchParams } =
+        new URL(req.url);
 
-    return new Response(JSON.stringify(executions), {
-        status: 200,
-    });
+    const userId =
+        searchParams.get("userId");
+
+    const executions =
+        await Execution.find({
+            userId,
+        });
+
+    return Response.json(executions);
 }

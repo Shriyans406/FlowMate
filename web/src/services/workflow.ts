@@ -1,29 +1,35 @@
 import mongoose from "mongoose";
 
-const WorkflowSchema = new mongoose.Schema({
-    name: String,
+const WorkflowSchema = new mongoose.Schema(
+    {
+        userId: {
+            type: String,
+            required: true,
+        },
 
-    trigger: {
-        type: String,
-        required: true,
-    },
+        name: {
+            type: String,
+            required: true,
+        },
 
-    action: {
-        type: String,
-        required: true,
-    },
+        trigger: {
+            type: String,
+            required: true,
+        },
 
-    status: {
-        type: String,
-        default: "active",
+        action: {
+            type: String,
+            required: true,
+        },
     },
-
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-});
+    {
+        timestamps: true,
+    }
+);
 
 export const Workflow =
     mongoose.models.Workflow ||
-    mongoose.model("Workflow", WorkflowSchema);
+    mongoose.model(
+        "Workflow",
+        WorkflowSchema
+    );

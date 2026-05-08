@@ -1,19 +1,35 @@
 import { connectDB } from "@/lib/db";
 import { Execution } from "@/services/execution";
 
-export async function GET() {
+export async function GET(req: Request) {
     await connectDB();
 
-    const total = await Execution.countDocuments();
-    const success = await Execution.countDocuments({ status: "success" });
-    const failed = await Execution.countDocuments({ status: "failed" });
+    const { searchParams } =
+        new URL(req.url);
 
-    return new Response(
-        JSON.stringify({
-            total,
-            success,
-            failed,
-        }),
-        { status: 200 }
-    );
+    const userId =
+        searchParams.get("userId");
+
+    const total =
+        await Execution.countDocuments({
+            userId,
+        });
+
+    const success =
+        await Execution.countDocuments({
+            userId,
+            status: "success",
+        });
+
+    const failed =
+        await Execution.countDocuments({
+            userId,
+            status: "failed",
+        });
+
+    return Response.json({
+        total,
+        success,
+        failed,
+    });
 }

@@ -44,8 +44,12 @@ export async function runWorkflow(trigger: string, payload: any) {
 
         // SAVE execution
         await Execution.create({
+            userId: wf.userId,
+
             workflowId: wf._id,
+
             status,
+
             log,
         });
     }
