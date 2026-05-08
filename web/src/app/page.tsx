@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useStore } from "@/lib/store";
 
+
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
+
+import { onAuthStateChanged } from "firebase/auth";
+//import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+
+
 export default function Home() {
   const {
     workflows,
@@ -15,6 +25,7 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<any>({});
+  const router = useRouter();
 
 
   async function fetchData() {
@@ -85,7 +96,18 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/login");
+      }
+    });
   }, []);
+
+  async function logout() {
+    await signOut(auth);
+
+    alert("Logged out");
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -99,6 +121,13 @@ export default function Home() {
         <h2 className="text-xl font-semibold mb-3 text-gray-700">
           Create Workflow (AI)
         </h2>
+
+        <button
+          onClick={logout}
+          className="bg-red-500 text-white px-4 py-2 rounded"
+        >
+          Logout
+        </button>
 
         <div className="flex gap-2">
           <input
@@ -199,5 +228,7 @@ export default function Home() {
         </ul>
       </div>
     </div>
+
+
   );
 }
